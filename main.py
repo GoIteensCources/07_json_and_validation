@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, status
 from fastapi.responses import RedirectResponse, JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI()
 
@@ -11,10 +11,21 @@ async def root():
 
 
 class Item(BaseModel):
-    name: str
+    name: str = Field(min_length=4)
     description: str = None
     price: float
-    tax: float = None
+    tax: float = Field(5, description="Нaлог на item", ge=0, lt=100)
+    inn: str            # number and alpha
+
+
+    @field_validator("inn")
+    @classmethod
+    def valid_inn(cls, v: str):
+        if len(v) != 10:
+            raise ValueError("len of field 'inn' must be 10")
+        return v
+
+
 
 
 @app.post("/items/")
