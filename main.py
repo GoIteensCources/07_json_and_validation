@@ -37,13 +37,10 @@ class Item(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def inn2_ommited(cls, data: Any):
+    def inn2_omitted(cls, data: Any):
         print(data)
         assert ("inn2" not in data), "inn2 not include in data"
         return data
-
-
-
 
 @app.post("/items/")
 async def create_item(item: Item, flag_save: bool = Query(True, description="set True for save")):
